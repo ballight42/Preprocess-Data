@@ -77,9 +77,14 @@ for iyr in range(2005,2013+1):
     days_in_month = calendar.monthrange(iyr, imon)[1]
     timearr=[datetime.datetime(iyr,imon,iday,ihr).strftime('%Y-%m-%dT%H') for ihr in [0,6,12,18] for iday in range(1,days_in_month+1)]
 
+    '''
     
     for ilevel in [1000,925,850,700,600,500,400,300,200]:
-        filo='SEUS.3d.{:d}hPa.{:s}.6hr.nc'.format(ilevel,timestr)
+      for iday in range(1,days_in_month+1):
+        timearr=[datetime.datetime(iyr,imon,iday,ihr).strftime('%Y-%m-%dT%H') for ihr in [0,6,12,18]]
+      
+        filo='SEUS.3d.{:d}hPa.{:04d}.{:02d}.{:02d}.6hr.nc'.format(ilevel,iyr,imon,iday)
+        print(filo)
         if os.path.exists(filo):continue
         cds = compute_coefficients(pstar=ilevel*100,pressure=ds["P"].sel(time=timearr).isel(south_north=slice(x_min,x_max,10),west_east=slice(y_min,y_max,10)).load())
         for var in ['V','U','QVAPOR']:
@@ -94,14 +99,14 @@ for iyr in range(2005,2013+1):
         subds.to_netcdf(filo)
         print(filo)
         os.system('cdo showvar {:s}'.format(filo))
+
     '''
-    # for 2-dimensional variables
-    for var in ['PREC_ACC_NC']:
+    timearr=[datetime.datetime(iyr,imon,iday,ihr).strftime('%Y-%m-%dT%H') for ihr in range(0,24) for iday in range(1,days_in_month+1)]
+    for var in ['REFL_COM']:
         filo='SEUS.{:s}.{:d}.{:02d}.1hr.nc'.format(var,iyr,imon)
         if os.path.exists(filo):continue
-        temp=ds[var].sel(time=timearr).isel(south_north=slice(x_min,x_max,15),west_east=slice(y_min,y_max,15)).load()
+        temp=ds[var].sel(time=timearr).isel(south_north=slice(x_min,x_max),west_east=slice(y_min,y_max)).load()
         subds = xarray.Dataset({var:temp},coords=temp.coords)
         subds.to_netcdf(filo)
         print(filo)
         os.system('cdo showvar {:s}'.format(filo))
-    '''
