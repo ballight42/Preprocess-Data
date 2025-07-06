@@ -36,12 +36,19 @@ for offset in $(seq 0 $step $max_offset); do
 done
 
 # Merge all ${output_dir}/${scenario}.${variable}.$((offset / step)).json into one unified "search.json"
-echo "Merging all JSON files into search.json..."
-
-jq -s 'reduce .[] as $item ({}; 
-      .numFound += ($item.response.numFound // 0) |
-      .response.docs += ($item.response.docs // []))' \
-      "${output_dir}"/*.[0123456789][012356789].json > "${output_dir}/search.json"
-
+echo "Merging all *.??.JSON files into search.json..."
+output_file="${output_dir}/search.json"
+echo "[" > "$output_file"
+# Loop through all *.??.JSON files and append them with commas
+first=1
+for file in "$output_dir"/*.[012356789][0123456789].json; do
+    if [ $first -eq 1 ]; then 
+        cat "$file" >> "$output_file"
+        first=0
+    else
+        echo "," >> "$output_file"
+        cat "$file" >> "$output_file"
+    fi
+done
 echo "Merged file saved as ${output_dir}/search.json"
 
