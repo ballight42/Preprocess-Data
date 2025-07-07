@@ -26,4 +26,4 @@ tools: `cdsapi` in `python`, `cdo`
 
 ## MRMS
 ### 1. normal downloading for SE US
-### multi-threading downloading using multiple CPUs
+### 2. multi-threading downloading using multiple CPUs
