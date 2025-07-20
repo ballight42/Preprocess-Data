@@ -53,6 +53,7 @@ request = {
     "variable": variable,
     "year": [str(iyr) for iyr in range(2024,2025)],
     "month": month,
+        "time": ["00:00"],
     "download_format": "unarchived",
     "grid": grid,
     # "area": [40, -100, 20, -70],
